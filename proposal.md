@@ -1,5 +1,7 @@
-Part 1 
-1. The app. Which app are you cloning and what does this app do? Why are you choosing it?
-2. The fundamental problem. What is the core problem that this app solves for its users? Focus on the problem, not the feature list. For example, the problem a ride sharing app solves isn't "showing cars on a map," it's getting from point A to point B without owning a car or finding a taxi.
-3. What you'll keep. What do you plan to do similarly to the original app, and why?
-4. What you'll change or remove. What do you plan to do differently, and why?
+For this project, I am choosing to clone the weather app. This app shows the most recent predictions for the temperature and weather conditions at a specific location for the current day and upcoming 10 days. I am choosing this app because it is simple and is something I use frequently.
+
+The core problem that this app solves for its users is that it helps them get rid of the unknown and to prepare for the current and upcoming days. Knowing or having a good idea of the day’s weather conditions allows users to dress appropriately and to perhaps bring an umbrella or extra sunscreen. 
+
+I plan to keep the fundamental aspects that make the weather app a weather app. As such, I would have the temperature and weather condition display for the day and future forecast. I enjoy being able to see the temperature changes every hour for the current day, so I plan on keeping that in my version of the app. It goes deeper into the core problem that the app solves by allowing users to prepare for the hour or to know when to expect a certain condition like rain at 3 pm versus rain at some possible time in the day. 
+
+I am referencing the built in weather app on iPhones which have a 10 day forecast. It seems a bit unnecessary and I personally have rarely ever looked that far into the future, so I would shorten it to the next 7 days. Another change I would make is where and how the information is displayed. Instead of seeing the general 10 day forecast on the main screen, I would have the day’s weather condition broken down by the hour. This weather by the hour information is present on the app, but to view the later hours of the day, you have to swipe. I instead want this information all presented on the main screen without having to scroll through. 

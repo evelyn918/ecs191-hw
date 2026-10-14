@@ -16,7 +16,35 @@ See [`proposal.md`](proposal.md) for the original Part 1 proposal.
 
 No third-party packages, API keys or setup scripts are needed.
 
-## Building and running
+
+## How to build app / Project Structure 
+```
+DressCast/
+├── DressCast.xcodeproj
+└── DressCast/
+    ├── DressCastApp.swift            App entry point
+    ├── ContentView.swift             Main screen, header, location search sheet, error view
+    ├── Models/
+    │   ├── NWSModels.swift           Decodable types for api.weather.gov responses
+    │   ├── ForecastSummary.swift     Current temp, today's high/low, hour grid, 7-day pairing
+    │   └── OutfitAdvisor.swift       What-to-wear / what-to-bring rules (new feature)
+    ├── Services/
+    │   ├── WeatherService.swift      NWS networking (points → hourly + daily forecasts)
+    │   └── LocationProvider.swift    GPS location and place-name search
+    ├── ViewModels/
+    │   └── WeatherViewModel.swift    Loading state and the Davis, CA fallback
+    └── Views/
+        ├── AdviceCard.swift          DressCast wear/bring card
+        ├── ForecastCard.swift        Tappable hourly grid / 7-day list
+        └── WeatherStyle.swift        Condition icons, background colors, card styling
+```
+
+### How the weather data is fetched
+1. `GET https://api.weather.gov/points/{lat},{lon}` returns the city name, time zone, and the forecast URLs for that spot.
+2. The app fetches the `forecastHourly` URL (hourly grid and the 12-hour outfit advice) and the `forecast` URL (day/night periods paired into the 7-day highs and lows) in parallel.
+3. Requests send a `User-Agent` header, as NWS asks, and retry automatically on the occasional 5xx error from NWS.
+
+## To run
 
 ### In Xcode (recommended)
 
@@ -30,37 +58,16 @@ No third-party packages, API keys or setup scripts are needed.
 3. Press **⌘R** (Product ▸ Run).
 4. When the app asks, allow location access, or choose **Don't Allow** to see the Davis, CA default.
 
-**Running on a physical iPhone:** select the **DressCast** target ▸ *Signing & Capabilities*, choose your Apple ID under **Team**, and, if Xcode reports a conflict, change the **Bundle Identifier** (`edu.ucdavis.ecs191.DressCast`) to something unique. Then pick your phone as the run destination and press ⌘R.
-
-### From the command line
-
-```bash
-cd DressCast
-xcodebuild -project DressCast.xcodeproj -scheme DressCast \
-  -destination 'platform=iOS Simulator,name=iPhone 17' build
-```
-
-### Testing locations in the Simulator
-
-- **Pretend to be somewhere else:** in the Simulator menu, choose *Features ▸ Location ▸ Custom Location…*, or run:
-  ```bash
-  xcrun simctl location booted set 47.6062,-122.3321   # Seattle
-  ```
-- **Test the Davis fallback:** deny location permission, or reset it with:
-  ```bash
-  xcrun simctl privacy booted revoke location edu.ucdavis.ecs191.DressCast
-  ```
-
 ---
 
-## Using DressCast
+## Using DressCast / Main Features 
 
 The whole main screen fits on one page with no horizontal swiping. From top to bottom, it shows:
 
 ### 1. Current conditions
 The **city name**, **current temperature**, **current conditions** (for example, "Mostly Sunny"), and today's **high (H) and low (L)**.
 
-### 2. DressCast: what to wear and what to bring ⭐ new feature
+### 2. DressCast: what to wear and what to bring ( new feature ) 
 This card sits right under the current conditions so you see it first. It looks at the **next 12 hours** of the hourly forecast and suggests:
 
 | Suggestion | When it appears |
@@ -98,31 +105,3 @@ The outfit is based on the warmest **daytime** hour in the 12-hour window, since
 **Pull down** on the screen to refresh the forecast. If the weather service can't be reached, an error screen appears with a **Try Again** button.
 
 ---
-
-## Project structure
-
-```
-DressCast/
-├── DressCast.xcodeproj
-└── DressCast/
-    ├── DressCastApp.swift            App entry point
-    ├── ContentView.swift             Main screen, header, location search sheet, error view
-    ├── Models/
-    │   ├── NWSModels.swift           Decodable types for api.weather.gov responses
-    │   ├── ForecastSummary.swift     Current temp, today's high/low, hour grid, 7-day pairing
-    │   └── OutfitAdvisor.swift       What-to-wear / what-to-bring rules (new feature)
-    ├── Services/
-    │   ├── WeatherService.swift      NWS networking (points → hourly + daily forecasts)
-    │   └── LocationProvider.swift    GPS location and place-name search
-    ├── ViewModels/
-    │   └── WeatherViewModel.swift    Loading state and the Davis, CA fallback
-    └── Views/
-        ├── AdviceCard.swift          DressCast wear/bring card
-        ├── ForecastCard.swift        Tappable hourly grid / 7-day list
-        └── WeatherStyle.swift        Condition icons, background colors, card styling
-```
-
-### How the weather data is fetched
-1. `GET https://api.weather.gov/points/{lat},{lon}` returns the city name, time zone, and the forecast URLs for that spot.
-2. The app fetches the `forecastHourly` URL (hourly grid and the 12-hour outfit advice) and the `forecast` URL (day/night periods paired into the 7-day highs and lows) in parallel.
-3. Requests send a `User-Agent` header, as NWS asks, and retry automatically on the occasional 5xx error from NWS.

@@ -1,12 +1,10 @@
 # DressCast
 
-DressCast is a native iOS weather app written in Swift and SwiftUI. It's a clone of the iPhone Weather app with one new feature: it tells you **what to wear and what to bring** based on the forecast for the next 12 hours.
+DressCast is a native iOS weather app written in Swift and SwiftUI. It's a clone of the iPhone Weather app with one new feature: it tells you **what to wear and what to bring** based on the forecast for the hours you'll actually be out, what you're doing, and what you usually carry.
 
 Forecast data comes from the free [National Weather Service API](https://www.weather.gov/documentation/services-web-api) (`api.weather.gov`). It needs no API key, but it only covers US locations.
 
 See [`proposal.md`](proposal.md) for the original Part 1 proposal.
-
----
 
 ## Requirements
 
@@ -58,50 +56,60 @@ DressCast/
 3. Press **⌘R** (Product ▸ Run).
 4. When the app asks, allow location access, or choose **Don't Allow** to see the Davis, CA default.
 
----
 
 ## Using DressCast / Main Features 
 
-The whole main screen fits on one page with no horizontal swiping. From top to bottom, it shows:
+### First launch: Personal Setup
+The first time you open DressCast, a one-screen **Personal Setup** appears. You can reopen it any time with the **⚙︎ gear** (top left).
 
-### 1. Current conditions
-The **city name**, **current temperature**, **current conditions** (for example, "Mostly Sunny"), and today's **high (H) and low (L)**.
+- **Your items:** for an extra layer, sunscreen, sunglasses, a water bottle and a hat, choose:
+  - **Remind me** (default): DressCast suggests it when the forecast makes it useful.
+  - **I always bring it**: you already carry it, so it's never suggested.
+  - **Never**: you don't want it, so it's never suggested.
+- **Do you run cold, normal, or warm?** Cold shifts the coat and jacket thresholds 5° warmer (you get a jacket sooner); warm shifts them 5° cooler.
+- **How do you get around?** Walk, bike, bus, or drive. Walking and biking make rain and wind matter more.
 
 ### 2. DressCast: what to wear and what to bring ( new feature ) 
 This card sits right under the current conditions so you see it first. It looks at the **next 12 hours** of the hourly forecast and suggests:
 
-| Suggestion | When it appears |
-|---|---|
-| **Shorts & T-shirt** | It gets to 75°F or warmer |
-| **T-shirt & pants** | 65–74°F |
-| **Light jacket** | 55–64°F |
-| **Jacket** | 40–54°F |
-| **Heavy coat** plus **hat & gloves** | Below 40°F |
-| **Extra layer** | It gets cooler later in the day (drops 12°F or more, or dips below 60°F on a warm day). Tells you how cold it gets and when. |
-| **Dress in layers** | It starts cold and warms up by 15°F or more |
-| **Windbreaker** | Winds reach 20 mph or more |
-| **Waterproof boots** | Snow is likely |
-| **Umbrella** | Rain is expected (40% chance or higher). Shows the peak chance and time. |
-| **Compact umbrella** | There's a slight chance of rain (20–39%) |
-| **Sunscreen** | Sunny and 65°F or warmer, or 80°F or warmer during the day |
-| **Sunglasses** | Sunny/clear daytime skies |
-| **Water bottle** | It gets to 80°F or warmer |
-| **Nothing extra** | Nothing needs to be brought along |
+### The main screen
+The whole screen fits on one page with no horizontal swiping. From top to bottom:
 
-The outfit is based on the warmest **daytime** hour in the 12-hour window, since that's when you're most likely to be out. At night it uses the average temperature instead. The NWS API doesn't provide a UV index, so sunscreen is based on sunny conditions and temperature.
+1. **Location bar:** ⚙︎ Personal Setup, the city name, and 🔍 to change location.
+2. **Time window chip**, e.g. **"Out 8 AM to 5 PM"**. Tap it to pick when you **leave** and when you're **back** (and whether that's today or tomorrow). By default the window is **now until 10 PM**. After 8 PM it switches to **tomorrow, 8 AM to 5 PM** and says "Tomorrow" on the chip.
+3. **Activity menu:** **Class/Work**, **Outdoors**, or **Evening out**. DressCast remembers your last choice.
+   - **Class/Work:** you're inside most of the day, so only the trip out (first hour of the window) and the trip home (last hour) count.
+   - **Outdoors:** every hour counts, and sun, heat, rain and wind matter more.
+   - **Evening out:** every hour in the window counts, with normal limits.
+4. **DressCast advice ⭐ (the main feature):** a one-line verdict like **"Jacket and umbrella today."**, followed by each suggestion with a reason taken from the forecast, e.g. *"50° at 8 AM but 71° by 4 PM, so wear layers you can take off"* or *"60% chance of rain at 4 PM on your way home"*. If nothing is needed, it says **"Nothing special today."**
+5. **Current conditions:** the current temperature, conditions, and today's high and low.
+6. **Your hours / 7-day forecast:** a compact grid of just the hours in your window (time, icon, temperature, rain chance when 20% or higher). Tap **7-Day** in the card's corner to switch to the week, and **Hourly** to switch back.
 
-### 3. Hourly grid ↔ 7-day forecast (tap to switch)
-- By default, the card shows **every remaining hour of today** in a grid (4 or 6 columns), so you never swipe sideways like you do in the built-in Weather app. Each cell shows the hour, a condition icon, the temperature, and the chance of rain when it's 20% or higher.
-- Late in the evening, when fewer than 6 hours are left in the day, the grid shows the **next 12 hours** instead so it's never nearly empty.
-- **Tap anywhere on the card** to switch to the **7-day forecast**: each day's condition icon, rain chance, low and high, and a bar showing that day's range compared to the rest of the week. Tap again to go back to the hourly grid.
+#### When each suggestion appears
 
-### 4. Changing location
+| Suggestion | Kind | When it appears |
+|---|---|---|
+| **Warm coat / Jacket / Light jacket** | Essential | The coldest hour you're outside feels below 40° / 55° / 63° (adjusted by cold/normal/warm) |
+| **Windbreaker** | Essential | Wind reaches 15 mph (walking, biking or outdoors) or 25 mph (otherwise) |
+| **Waterproof boots** | Essential | Snow is likely (30%+) |
+| **Umbrella** | Essential | Rain chance reaches 30% (walking, biking or outdoors) or 50% (otherwise) |
+| **Extra layer** | Personal | The temperature swings 15° or more while you're out |
+| **Warm hat / Sun hat** | Personal | It feels below 40°, or it's sunny and 80°+ (75°+ outdoors) |
+| **Sunscreen** | Personal | Sunny daytime hour at 70°+ (60°+ outdoors) |
+| **Sunglasses** | Personal | Any sunny or clear daytime hour |
+| **Water bottle** | Personal | It gets to 80°+ (75°+ outdoors) |
+
+"Personal" items only appear if you chose **Remind me** for them. The NWS API doesn't provide a UV index, so sun advice is based on sunny conditions and temperature.
+
+### Tappable days
+In the 7-day forecast, **tap any day** to open its detail screen: that day's conditions, **high and low**, its own **DressCast advice**, and its **hours inside your time window**, using the same setup, window and activity as the main screen. Tap the **‹ back** button (or swipe from the left edge) to return.
+
+### Changing location
 - On launch, DressCast asks for your location and shows the weather where you are.
 - Tap the **🔍 magnifying glass** (top right) to type a **US city, "City, State" or ZIP code** (for example, `Sacramento, CA` or `95616`).
 - In the same sheet, tap **Use My Current Location** to go back to GPS.
 - **Davis, CA is the default.** If location permission is denied, no location arrives within 10 seconds, or a search can't be found or is outside the US, DressCast loads Davis, CA and shows a short banner explaining why.
 
-### 5. Refreshing
+### Refreshing
 **Pull down** on the screen to refresh the forecast. If the weather service can't be reached, an error screen appears with a **Try Again** button.
 
----

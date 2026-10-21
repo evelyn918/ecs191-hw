@@ -1,27 +1,34 @@
 import SwiftUI
 
-/// DressCast's "what to wear / what to bring" card, based on the next 12 hours.
+/// DressCast's "what to wear / what to bring" card: a one-line verdict, then
+/// each suggestion with its reason. Used on the main screen and the day detail screen.
 struct AdviceCard: View {
-    let advice: OutfitAdvice
+    let advice: Advice
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            SectionLabel(text: "DressCast · Next 12 hours", symbol: "hanger")
-            HStack(alignment: .top, spacing: 12) {
-                column("Wear", items: advice.wear)
-                Divider().overlay(.white.opacity(0.3))
-                column("Bring", items: advice.bring)
+        VStack(alignment: .leading, spacing: 12) {
+            SectionLabel(text: "DressCast", symbol: "hanger")
+            Text(advice.verdict)
+                .font(.title2.weight(.semibold))
+                .fixedSize(horizontal: false, vertical: true)
+            // Empty groups are hidden, so "Nothing special today." stands alone.
+            if !advice.wear.isEmpty {
+                group("Wear", items: advice.wear)
+            }
+            if !advice.bring.isEmpty {
+                group("Bring", items: advice.bring)
             }
         }
         .card()
     }
 
-    private func column(_ title: String, items: [AdviceItem]) -> some View {
+    private func group(_ title: String, items: [Suggestion]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.subheadline.weight(.bold))
+                .foregroundStyle(.white.opacity(0.7))
             ForEach(items) { item in
-                HStack(alignment: .top, spacing: 8) {
+                HStack(alignment: .top, spacing: 10) {
                     Image(systemName: item.symbol)
                         .font(.body)
                         .symbolRenderingMode(.hierarchical)
@@ -29,7 +36,7 @@ struct AdviceCard: View {
                     VStack(alignment: .leading, spacing: 1) {
                         Text(item.title)
                             .font(.subheadline.weight(.semibold))
-                        Text(item.detail)
+                        Text(item.reason)
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.75))
                             .fixedSize(horizontal: false, vertical: true)
@@ -38,6 +45,5 @@ struct AdviceCard: View {
                 .accessibilityElement(children: .combine)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
